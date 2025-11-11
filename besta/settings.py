@@ -45,7 +45,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 ALLOWED_HOSTS = [
     'wallsblanks.com',
     'www.wallsblanks.com',
-    'maneapp-c9b7bqh5hmfwhjhy.mexicocentral-01.azurewebsites.net',
+    'wallsblanks-awbhfhhxh7gwd7am.mexicocentral-01.azurewebsites.net',
     '127.0.0.1'
 ]
 # ...existing code...
