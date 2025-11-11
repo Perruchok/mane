@@ -1,0 +1,103 @@
+{% extends "shop/layout.html" %}
+{% load static %}
+
+{% block main %}
+
+  <div class="custom_titulos">
+    <img src="{% static 'shop/carritolettering.png' %}" alt="carrito" >
+  </div>
+
+  <br></br>
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong>{{ message }}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+        </button>
+      </div>
+    {% endfor %}
+    {% endif %}
+
+
+  <a href="/"> Seguir comprando </a>
+  <br></br>
+
+  {% if empty %}
+  <h4> El carrito está vacío </h4>
+  <br></br>
+  {% else %}
+  <div class = "container_cart" >
+    <table class=" table-bg">
+      <thead>
+        <tr>
+          <br>
+          <th scope="col" ><p class="item-name"><br>Artículo</p></th>
+          <th scope="col"><p class="item-name"><br>Detalle</p></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in carrito %}
+        <tr> 
+          <td colspan="1">
+            <img src="{{ row.item.pic0 }}" class = "pedidos_img">
+            <br>
+            <form action="{% url 'carrito' %}" method="post">
+              {% csrf_token %}
+              <input type="hidden" name="cart_id" value="{{ row.id }}">
+              <input type="hidden" name="item_id" value="{{ row.item.id }}">
+              <input type="hidden" name="cantidad" value="{{ row.cantidad }}">
+              <input type="hidden" name="talla" value="{{ row.talla }}">
+              <input type="hidden" name="variante" value="{{ row.variante }}">  
+              <input type="hidden" name="method" value="quitar">
+              <button class = "button_quitar" type="submit"> Quitar </button>
+            </form>
+          </td>
+          <td colspan="1">
+            <p class="item-name">{{ row.item.nombre }} - {{ row.talla }}</p>
+            <p class="item-detail">Cantidad: {{ row.cantidad }}</p>
+            <p class="item-detail">Precio: ${{ row.item.precio }}.00</p>
+          </td>
+        </tr>
+        {% endfor %}
+        <tr>
+          <td colspan="1">
+            <br>
+          </td>
+        </tr>
+      </tbody> 
+    </table> 
+  </div>
+  <br></br> 
+  </div>
+  <div class="container d-flex flex-column  table-bg" style="max-width: 450px;" >
+    <br></br>
+    <h3>Subtotal = ${{ subtotal }}.00</h3>
+    <br></br>
+  </div>
+  <br></br>
+  <div>
+    <form action="{% url 'carrito' %}" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="method" value="select_envio" >
+      <button 
+        type="submit" 
+        class="btn btn-lg btn-bisel" 
+        style="background:none; border:none; padding:0;"
+        onclick="fbq('track', 'InitiateCheckout', {
+          num_items: {{ carrito|length }},
+          value: {{ subtotal }},
+          currency: 'MXN'
+        });"
+      >
+        <img src="{% static 'shop/metodo.png' %}" alt="Agregar al carrito" style="width:180px;">
+      </button>
+    </form>
+  </div>
+{% endif %}
+
+<div class="footer_spacer"></div>
+<div class="footer_spacer"></div>
+
+
+
+{% endblock %}

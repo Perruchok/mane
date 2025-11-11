@@ -1,0 +1,284 @@
+{% extends "shop/layout.html" %}  
+{% load static %}
+{% load shop_extras %}
+
+{% block main %}
+
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+      <strong>{{ message }}</strong>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+      </button>
+    </div>
+  {% endfor %}
+{% endif %}
+
+
+<div class="containeritem">
+    <div class="item_view">
+      <div class="swiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide">
+            <img src="{{ item.pic0 }}" />
+          </div>
+          {% for adress in pic_adress %}
+          <div class="swiper-slide">
+            <img src="{{ adress }}" />
+          </div>
+          {% endfor %}
+        </div>
+        <!-- Navigation buttons -->
+          <div class="swiper-button-prev">
+            <img src="{% static 'shop/FLECHA-2.png' %}" alt="Anterior">
+          </div>
+          <div class="swiper-button-next">
+            <img src="{% static 'shop/FLECHA.png' %}" alt="Siguiente">
+          </div>
+        {% comment %} <!-- Pagination (optional) -->
+        <div class="swiper-pagination"></div> {% endcomment %}
+      </div>
+    </div>
+    <div class="item_info d-flex flex-column align-items-center gap-4">
+      <div>
+        <h2>{{ item.nombre }}</h2>
+      </div>
+      <div>
+        <h3>${{ item.precio }}.00</h3>
+      </div>
+
+      <script>
+        const event_id = crypto.randomUUID();
+        fbq('track', 'ViewContent', {
+          content_ids: ['{{ item.id }}'],
+          content_name: '{{ item.nombre }}',
+          content_type: 'product',
+          value: {{ item.precio }},
+          currency: 'MXN',
+          event_id: event_id
+        });
+      
+        fetch('/api/meta/event/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            event_name: 'ViewContent',
+            event_id: event_id,
+            event_source_url: window.location.href,
+            custom_data: {
+              content_ids: ['{{ item.id }}'],
+              content_name: '{{ item.nombre }}',
+              content_type: 'product',
+              value: {{ item.precio }},
+              currency: 'MXN'
+            }
+          })
+        });
+      </script>
+
+      {% if not out_of_stock %}
+      <form action="{% url 'product_detail' slug=item.slug %}" method="post">
+        {% csrf_token %}
+        <div>
+      
+            <div class="talla-container ">
+                <div id="talla-buttons" class="btn-group" role="group" aria-label="Tallas">
+                    {% for talla in tallas %}
+                        {% if item.stock|length > forloop.counter0 and item.stock|index:forloop.counter0 > 0 %}
+                            <button type="button" class="talla-btn" 
+                                    data-talla="{{ talla }}" 
+                                    data-stock="{{ item.stock|index:forloop.counter0 }}">
+                                    <img src="{% static 'shop/botones_tallas/'|add:talla|add:'2.png' %}" 
+                                      alt="Talla {{ talla }}" 
+                                      data-base="{{ talla }}">
+                            </button>
+                        {% else %}
+                            <button type="button" class="talla-btn talla-btn-disabled" disabled>
+                                <img src="{% static 'shop/botones_tallas/'|add:talla|add:'3.png' %}" alt="Talla {{ talla }}">
+                            </button>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <input type="hidden" name="talla" id="selected-talla" required>
+                <select class="cantidad-select" id="select_cantidad" name="cantidad" required disabled>
+                    <option selected>
+                      CANTIDAD
+                    </option>
+                </select>
+            </div>
+
+          <!-- Link trigger modal -->
+          {% if item.categoria != "Prints" %}
+              {% if  item.nombre == "Levanta Fierros" %} <!-- Diferente guia de tallas-->
+                <button type="button" data-bs-toggle="modal" data-bs-target="#modal_tallas_over" class="btn btn-lg btn-bisel">
+                  <img src="{% static 'shop/guia-de-tallas.png' %}" alt="Guía de tallas"  style="width:140px;"/>
+                </button>
+              {% else %}  
+                <button type="button" data-bs-toggle="modal" data-bs-target="#modal_tallas" class="btn btn-lg btn-bisel">
+                    <img src="{% static 'shop/guia-de-tallas.png' %}" alt="Guía de tallas"  style="width:140px;"/>
+                </button>
+              {% endif %}
+          {% endif %}
+
+        </div>
+        {% comment %} <div>
+          <h5>Descripción del producto:</h5>
+          {{ item.descripcion }}
+        </div> {% endcomment %}
+        <br></br>
+        <div>
+          <button 
+            type="submit"
+            class="btn btn-lg btn-bisel"
+            style="background:none; border:none; padding:0;"
+            onclick="
+              const event_id = crypto.randomUUID();
+              fbq('track', 'AddToCart', {
+                content_ids: ['{{ item.id }}'],
+                content_name: '{{ item.nombre }}',
+                value: {{ item.precio }},
+                currency: 'MXN',
+                event_id: event_id
+              });
+              fetch('/api/meta/event/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  event_name: 'AddToCart',
+                  event_id: event_id,
+                  event_source_url: window.location.href,
+                  custom_data: {
+                    content_ids: ['{{ item.id }}'],
+                    content_name: '{{ item.nombre }}',
+                    value: {{ item.precio }},
+                    currency: 'MXN',
+                    content_type: 'product'
+                  }
+                })
+              });
+            "
+          >
+            <img src="{% static 'shop/agregar-al-carrito.png' %}" alt="Agregar al carrito" style="width:180px;">
+          </button>    
+        </div>
+      </form>
+      {% else %}
+      <div>
+        Este artículo se ha agotado. 
+      </div>
+      {% endif %}
+    </div>
+</div>
+
+  <!-- Modal para guia de tallas -->
+        <div class="modal fade" id="modal_tallas"   tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-body">
+                <img src="{% static 'shop/tallas.jpg' %}" alt="Guía de tallas" class="img-fluid">
+              </div>
+            </div>
+          </div>
+        </div>
+    <!-- Modal para guia de tallas alternativo -->
+        <div class="modal fade" id="modal_tallas_over"   tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-body">
+                <img src="{% static 'shop/TALLAS-OVER.jpg' %}" alt="Guía de tallas" class="img-fluid">
+              </div>
+            </div>
+          </div>
+        </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tallaButtons = document.querySelectorAll('.talla-btn');
+    const cantidadSelect = document.getElementById('select_cantidad');
+    const tallaInput = document.getElementById('selected-talla');
+    const addToCartBtn = document.querySelector('button[type="submit"]');
+
+    function updateAddToCartState() {
+        // Enable only if cantidadSelect is enabled and a valid quantity is selected
+        if (!cantidadSelect.disabled && cantidadSelect.value !== "CANTIDAD") {
+            addToCartBtn.disabled = false;
+        } else {
+            addToCartBtn.disabled = true;
+        }
+    }
+
+    tallaButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Set selected talla in hidden input
+            tallaInput.value = this.dataset.talla;
+
+            // Remove active class from all buttons, add to this one
+            tallaButtons.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+
+            // Update cantidad options
+            const stock = parseInt(this.dataset.stock);
+            cantidadSelect.innerHTML = '<option selected>CANTIDAD</option>';
+            for (let i = 1; i <= stock; i++) {
+                cantidadSelect.innerHTML += `<option value="${i}">${i}</option>`;
+            }
+            cantidadSelect.disabled = false;
+            updateAddToCartState();
+        });
+    });
+
+    cantidadSelect.addEventListener('change', updateAddToCartState);
+
+    // Initial state: disable button
+    addToCartBtn.disabled = true;
+});
+
+  const swiper = new Swiper('.swiper', {
+    loop: true,
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+    // Remove autoplay if you want manual only
+    autoplay: false,
+  });
+
+
+// Script to handle talla buttons behaviour 
+document.addEventListener("DOMContentLoaded", function () {
+    const buttons = document.querySelectorAll(".talla-btn");
+
+    buttons.forEach(btn => {
+        btn.addEventListener("click", function () {
+            // Reset all images to '2.png'
+            buttons.forEach(b => {
+                const img = b.querySelector("img");
+                if (img && !b.disabled) {
+                    const base = img.dataset.base;
+                    img.src = `/static/shop/botones_tallas/${base}2.png`;
+                }
+            });
+
+            // Change clicked button's image to '1.png'
+            const img = this.querySelector("img");
+            if (img && !this.disabled) {
+                const base = img.dataset.base;
+                img.src = `/static/shop/botones_tallas/${base}1.png`;
+            }
+
+            // Optional: store selected talla
+            const selectedTalla = this.dataset.talla;
+            document.getElementById("selected-talla").value = selectedTalla;
+
+            // Optional: enable cantidad dropdown
+            document.getElementById("select_cantidad").disabled = false;
+        });
+    });
+});
+
+</script>
+{% endblock %}

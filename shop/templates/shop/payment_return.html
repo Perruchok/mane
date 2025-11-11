@@ -1,0 +1,52 @@
+{% extends "shop/layout.html" %}
+{% load static %}
+
+{% block main %}
+
+<div class="custom_titulos">
+  <img src="{% static 'shop/FRACIAS.png' %}" alt="pedidos" >
+</div>
+
+<br></br>
+
+<div class="container d-flex flex-column  table-bg">
+    <br></br>
+    <p>Hemos enviado un correo de confirmación a {{ customer_email }}.</p>
+    <p>Si tienes alguna pregunta, no dudes en contactarnos a:</p>
+    <p>soporte@maneappgogo.shop</p>
+    <br></br>
+    <script>
+      const event_id = crypto.randomUUID();
+      const content_ids = {{ content_ids|safe }};
+      const value = {{ total_productos }};
+    
+      fbq('track', 'Purchase', {
+        content_ids: content_ids,
+        value: value,
+        currency: 'MXN',
+        event_id: event_id
+      });
+    
+      fetch("/api/meta/event/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          event_name: "Purchase",           // <-- REQUIRED
+          event_id: event_id,
+          event_source_url: window.location.href,
+          custom_data: {
+            content_ids: content_ids,
+            value: value,
+            currency: "MXN"
+          }
+        })
+      });
+    </script>
+</div>
+<br></br>
+
+<p>
+    <a href="{% url 'pedidos' %}">Ver mis pedidos</a>
+</p>
+
+{% endblock %}

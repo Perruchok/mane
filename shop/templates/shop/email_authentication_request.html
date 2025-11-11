@@ -1,0 +1,21 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Confirma tu cuenta en maneapp Shop</title>
+</head>
+<body style="margin:0;padding:0;">
+    <div style="max-width:500px;margin:0 auto;text-align:center;">
+        <img src="https://raw.githubusercontent.com/Perruchok/besta_pictures/refs/heads/main/corazon.png" alt="maneapp Shop" style="width:160px;margin-top:24px;margin-bottom:16px;">
+        <h2 style="margin-bottom:8px;">¡Hola {{ user }}!</h2>
+        <p>Gracias por registrarte en maneapp Shop.</p>
+        <p>Antes de comenzar, necesitamos verificar que este correo electrónico es tuyo.</p>
+        <p>Por favor, haz clic en el siguiente enlace para activar tu cuenta:</p>
+        <p><a href="{{ activation_link }}">Activar cuenta</a></p>
+        <p>Si no fuiste tú quien creó esta cuenta, puedes ignorar este correo.</p>
+        <br>
+        <p>Gracias,</p>
+        <p>El equipo de maneapp</p>
+    </div>
+</body>

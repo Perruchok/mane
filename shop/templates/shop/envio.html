@@ -1,0 +1,47 @@
+{% extends "shop/layout.html" %}
+{% load static %}
+
+{% block title %}
+    Envio
+{% endblock %}
+
+{% block main %}
+
+   {% if messages %}
+    <br></br>
+    <br></br>
+      {% for message in messages %}
+
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+          <strong>{{ message }}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+          </button>
+        </div>
+      {% endfor %}
+   {% endif %}
+<br></br>
+
+<div class="d-flex flex-column align-items-center">
+  <form action="{% url 'carrito' %}" method="post" class="shipping-form">
+    {% csrf_token %}
+    <div class="form-group d-flex flex-column align-items-center gap-3">
+      <button type="submit" name="envio" value="Local" class="btn btn-lg btn-bisel" >
+        <img src="{% static 'shop/gto.png' %}" alt="Local" >
+      </button>
+      <button type="submit" name="envio" value="Correos de México" class="btn btn-lg btn-bisel" >
+        <img src="{% static 'shop/correos.png' %}" alt="Correos de México" >
+      </button>
+      <button type="submit" name="envio" value="Estafeta/DHL" class="btn btn-lg btn-bisel" >
+        <img src="{% static 'shop/dhl.png' %}" alt="Estafeta/DHL" >
+      </button>
+    </div>
+    <input type="hidden" value="goto_adress" name="method">
+  </form>
+</div>
+
+
+
+<br></br>
+<br></br>
+<br></br>
+{% endblock %}

@@ -1,0 +1,173 @@
+{% extends "shop/layout.html" %}
+{% load static %}
+
+{% block main %}
+  <br></br>
+  <div class="custom_titulos">
+    <img src="{% static 'shop/bienvenido.png' %}" alt="Anterior">
+  </div>
+    <br></br>
+   {% if messages %}
+      {% for message in messages %}
+
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <strong>{{ message }}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+          </button>
+        </div>
+
+      {% endfor %}
+   {% endif %}
+
+    <br></br>
+    <div class="align-items-center containeruser gap-4">
+      <div class="item">
+        <img src="{% static 'shop/profile.png' %}" alt=noalt>
+        <br>
+        <br>
+        <h1>{{ info.username }}</h5>
+      </div>
+      <div class="user_container d-flex flex-column align-items-center gap-4">
+        <button class="btn btn-lg btn-bisel" data-bs-toggle="modal" data-bs-target="#Modal1" style="background:none; border:none; padding:0;">
+            <img src="{% static 'shop/direccion.png' %}" alt="Dirección y contacto" style="width:250px;">
+        </button> 
+        <a class ="nolink" href="{% url 'pedidos' %}">
+          <button class="btn btn-lg btn-bisel" data-bs-toggle="modal" data-bs-target="#Modal1" style="background:none; border:none; padding:0;">
+            <img src="{% static 'shop/mis-compras.png' %}" alt="Mis Compras" style="width:250px;">
+        </button> 
+        </a>
+        <a class ="nolink" href="{% url 'logout_view' %}">
+          <button class="btn btn-lg btn-bisel" style="background:none; border:none; padding:0;">
+            <img src="{% static 'shop/cerrar_cesion.png' %}" alt="Cerrar sesión" style="width:250px;">
+        </button> 
+        </a>
+      </div>
+    </div>
+    <br></br>
+    <br></br>
+    <br></br>
+
+<!-- Modal For dirección y contacto -->
+<div class="modal fade" id="Modal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Dirección y contacto</h5>
+      </div>
+      <div class="modal-body">
+        {% if info.telefono != None %}
+          <h5>Contacto </h5>
+          <p>Nombre completo: {{ info.first_name}} {{ info.last_name }} </p>
+          <p>Telefono: {{ info.telefono  }}</p>
+          <hr>
+          <h5>Dirección de envío </h5>
+          <p> Dirección: {{ info.calle }} {{info.n_interior}} {{ info.n_exterior }} </p>
+          <p>{{ info.colonia }} </p>
+          <p>{{ info.ciudad }}, {{ info.estado }}</p>
+          <p> Código postal: {{ info.cpp }}</p>
+        {% else %}
+          <p>Aún no has actualizado tu información de usuario. ¡Actualízala ahora para poder comprar!</p>
+        {% endif %}
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-lg btn-bisel" data-bs-dismiss="modal" style="background:none; border:none; padding:0;">
+            <img src="{% static 'shop/CERRAR.png' %}" alt="Cerrar" style="width:150px;">
+        </button> 
+        <button class="btn btn-lg btn-bisel" data-bs-toggle="modal" data-bs-target="#Modal3" style="background:none; border:none; padding:0;">
+            <img src="{% static 'shop/ACTUALIZAR.png' %}" alt="Actualizar" style="width:150px;">
+        </button> 
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Compras -->
+<div class="modal fade" id="Modal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Mis compras</h5>
+      </div>
+      <div class="modal-body">
+        <h5> En proceso </h5>
+        {% if onprocess %}
+          <p>{{ onprocess }}</p>
+        {% else %}
+          <p>No tienes ningúna compra en proceso. ¡¿Qué estás esperando ?!</p>
+        {% endif %}
+        <hr>
+        <h5> Historial </h5>
+        {% if historial %}
+          <p>{{ historial }}</p>
+        {% else %}
+          <p>...</p>
+        {% endif %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--- Actualizar información de contacto -->
+<div class="modal fade bd-example-modal-lg" id="Modal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Dirección y contacto</h5>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'user' %}" method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre Completo</label>
+            <input class="form-control" type="text" name="nombre" id="nombre" placeholder="Nombre Completo" required autocomplete="name">
+        </div>
+        
+        <div class="mb-3">
+            <label for="calle" class="form-label">Calle y número</label>
+            <input class="form-control" type="text" name="calle" id="calle" placeholder="Calle, número ext e int" required autocomplete="address-line1">
+        </div>
+        
+        <div class="row mb-3 align-items-end">
+            <div class="col-8">
+                <label for="cpp" class="form-label">Código Postal</label>
+                <input class="form-control" type="text" name="cpp" id="cpp" placeholder="Por ejemplo: 36000" required autocomplete="postal-code">
+                <div id="cpp-error" class="text-danger small mt-1" style="display:none;"></div>
+            </div>
+        </div>
+        
+        <div class="mb-3">
+            <label for="telefono" class="form-label">Número de Teléfono</label>
+            <input class="form-control" type="text" name="telefono" id="telefono" placeholder="Teléfono" required autocomplete="tel">
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col">
+                <label for="estado" class="form-label">Estado</label>
+                <input class="form-control" type="text" name="estado" id="estado" placeholder="Estado" required autocomplete="address-level1">
+            </div>
+            <div class="col">
+                <label for="ciudad" class="form-label">Ciudad</label>
+                <input class="form-control" type="text" name="ciudad" id="ciudad" placeholder="Ciudad" required autocomplete="address-level2">
+            </div>
+            <div class="col">
+                <label for="colonia" class="form-label">Colonia</label>
+                <input class="form-control" type="text" name="colonia" id="colonia" placeholder="Colonia" required autocomplete="address-line2">
+            </div>
+        </div>
+            <button type="submit" class="btn btn-lg btn-bisel" style="background:none; border:none; padding:0;">
+                <img src="{% static 'shop/ACTUALIZAR.png' %}" alt="Actualizar" style="width:150px;">
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock %}
+

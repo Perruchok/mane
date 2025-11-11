@@ -1,0 +1,57 @@
+# Docs: https://github.com/Azure/webapps-deploy
+# Python, GitHub Actions, Azure: https://aka.ms/python-webapps-actions
+
+name: Build and deploy Python app to Azure Web App - maneapp
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: Production
+
+    steps:
+      # 1. Checkout repo
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # 4. Optional: check migrations (dry run)
+      - name: Migrations check
+        run: python manage.py makemigrations --check --dry-run
+
+      # 5. Collect static files
+      - name: Collect static files
+        run: python manage.py collectstatic --noinput
+
+      # 6. Prepare clean ZIP for deployment
+      - name: Zip app for deployment
+        run: |
+          rm -f release.zip
+          zip -r release.zip besta shop manage.py requirements.txt otel_setup.py \
+            -x "venv/*" ".git/*" "__pycache__/*" "*.pyc" "release.zip"
+          unzip -l release.zip
+
+      # 7. Deploy ZIP to Azure
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'maneapp'
+          slot-name: 'Production'
+          package: release.zip
+          publish-profile: ${{  }}

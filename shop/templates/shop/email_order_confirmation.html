@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Confirmación de tu pedido</title>
+</head>
+<body style="margin:0;padding:0;">
+    <div style="max-width:500px;margin:0 auto;text-align:center;">
+        <img src="https://raw.githubusercontent.com/Perruchok/besta_pictures/refs/heads/main/corazon.png" alt="maneapp Shop Logo" style="width:160px;margin-top:24px;margin-bottom:16px;">
+        <h2 style="margin-bottom:8px;">¡Gracias por tu compra en maneapp Shop!</h2>
+        <p>Hemos recibido tu pedido y lo estamos procesando.</p>
+        <h3 style="margin-top:24px;">Detalles de tu pedido:</h3>
+        <ul style="display:inline-block;text-align:left;margin:0 auto 16px auto;padding-left:0;">
+            {% for row in order %}
+                <li style="margin-bottom:6px;">
+                    {{ row.cantidad }} x {{ row.nombre }} (Talla: {{ row.talla }}) - ${{ row.item.precio }} c/u
+                </li>
+            {% endfor %}
+            Envío: {{ empresa_envio }}  - ${{ envio_price }} MXN
+        </ul>
+        <p><strong>Total:</strong> ${{ total_pagado }} MXN</p>
+        <p>Te enviaremos un correo cuando tu pedido sea enviado.</p>
+        <br>
+        <p>Gracias por confiar en nosotros,<br>El equipo de maneapp Shop</p>
+    </div>
+</body>

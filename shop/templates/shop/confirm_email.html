@@ -1,0 +1,33 @@
+{% extends "shop/layout.html" %}
+{% load static %}
+
+{% block main %}
+<div class="container d-flex flex-column  table-bg" style="max-width: 450px;" >
+<h2>Revisa tu correo electrónico</h2>
+<p>Hemos enviado un mensaje a <strong>{{ email }}</strong> con un enlace para activar tu cuenta.</p>
+<p>Por favor, haz clic en el enlace para confirmar tu dirección de correo y completar el registro.</p>
+<p>⚠️ Si no encuentras el correo en tu bandeja de entrada, revisa tu carpeta de spam o promociones.</p>
+
+</div>
+
+<script>
+  const event_id = crypto.randomUUID();
+  fbq('track', 'CompleteRegistration', {
+    event_id: event_id
+  });
+
+  fetch("/api/meta/event/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      event_name: "CompleteRegistration",
+      event_id: event_id,
+      event_source_url: window.location.href,
+      custom_data: {
+        email: "{{ email }}"
+      }
+    })
+  });
+</script>
+
+{% endblock %}

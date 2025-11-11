@@ -1,0 +1,55 @@
+{% extends "shop/layout.html" %}
+{% load static %}
+
+{% block title %}
+    Check
+{% endblock %}
+
+{% block main %}
+
+{% if envio == 'Local'%}
+<h2>¡Casi listo! Nos pondremos en contacto contigo pronto.</h2>
+{% else %}
+<h2>Tu paquete será enviado con los siguientes datos:</h2>
+{% endif %}
+<br>
+<div class="container_cart table-bg p-3" style="max-width: 450px; background-color: #f9f9f9; border-radius: 8px;">
+  <div class="mb-2">
+    <span style="color: #555;">Nombre:</span>
+    <span style="margin-left: 5px;">{{ info.nombre }}</span>
+  </div>
+  <div class="mb-2">
+    <span style="font-style: italic; color: #555;">Domicilio:</span>
+    <span style="margin-left: 5px;">{{ info.calle }}, {{ info.colonia }}, {{ info.ciudad }}, Cpp: {{ info.cpp }}</span>
+  </div>
+  <div class="mb-2">
+    <span style="font-style: italic; color: #555;">Número de teléfono:</span>
+    <span style="margin-left: 5px;">{{ info.telefono }}</span>
+  </div>
+</div>
+
+<br>
+<br>
+
+<div class="jiggle">
+    <div class="jiggleson">
+        <form  action="{% url 'carrito' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" value="modify_adress" name="method">
+            <button type="submit" name="envio" value="Correos de México" class="mb-4 btn btn-lg btn-bisel" style="background:none; border:none; padding:0;">
+                <img src="{% static 'shop/modificar.png' %}" alt="Correos de México" style="width:200px;">
+            </button>
+        </form>
+    </div>
+   <div class="jiggleson">
+    <form action="{% url 'checkout' %}" method="get">
+        {% csrf_token %}
+        <button type="submit" name="envio"  class="mb-4 btn btn-lg btn-bisel" style="background:none; border:none; padding:0;">
+            <img src="{% static 'shop/proceder.png' %}" alt="Proceder" style="width:200px;">
+        </button>
+    </form>
+   </div>
+</div>
+
+
+{% endblock %}

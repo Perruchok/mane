@@ -1,0 +1,54 @@
+{% extends "shop/layout.html" %}
+{% load static %}
+
+{% block title %}
+  Log in
+{% endblock %}
+
+{% block main %}
+<br></br>
+
+   {% if messages %}
+      {% for message in messages %}
+
+      
+        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+          <strong>{{ message }}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+          </button>
+        </div>
+      {% endfor %}
+   {% endif %}
+
+  <div class="custom_titulos">
+    <img src="{% static 'shop/LETTERING.png' %}" alt="Login">
+  </div>
+
+<div class="form_init">
+  <form action="{% url 'login_view' %}" method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <input autofocus class="form-control" type="text" name="username" placeholder="Usuario o Email">
+    </div>
+    <div class="form-group">
+        <input class="form-control" type="password" name="password" placeholder="Contraseña">
+    </div>
+    <button type="submit" class="btn btn-lg btn-bisel" style="background:none; border:none; padding:0;">
+      <img src="{% static 'shop/iniciar-sesion.png' %}" alt="Agregar al carrito" style="width:180px;">
+    </button>
+    <br></br>
+  </form>
+
+</div>
+
+<p>
+  ¿Aún no tienes cuenta? <a href="{% url 'register' %}">Regístrate aquí.</a>
+</p>
+<p>
+  ¿Olvidaste tu contraseña? <a href="{% url 'password_reset_view' %}">Restablecer aquí.</a>
+</p>
+
+<br></br>
+<br></br>
+<br></br>
+{% endblock %}

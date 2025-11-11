@@ -1,0 +1,105 @@
+{% extends "shop/layout.html" %}
+{% load static %}
+
+{% block title %}
+    Dirección
+{% endblock %}
+
+{% block main %}
+
+
+{% if envio == 'Local' %}
+<h2>Entregaremos tu pedido pesonalmente. Por favor dejanos tu información, y te contactaremos pronto.</h2>
+{% else %}
+<h2>¿A qué dirección mandaremos tu paquete?</h2>
+{% endif %}
+<br>
+
+
+<div class="formdiv">
+    <form action="{% url 'carrito' %}" method="post" id="address-form">
+        {% csrf_token %}
+        
+        {% if is_guest %}
+        <div class="mb-3">
+            <label for="email" class="form-label">Correo Electrónico</label>
+            <input class="form-control" type="email" name="email" id="email" placeholder="Correo Electrónico" required autocomplete="email">
+            <span id="email-error" style="color:red;display:none;">Email inválido</span>
+        </div>
+        {% endif %}
+
+        <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre Completo</label>
+            <input class="form-control" type="text" name="nombre" id="nombre" placeholder="Nombre Completo" required autocomplete="name">
+        </div>
+        
+        <div class="mb-3">
+            <label for="calle" class="form-label">Calle y número</label>
+            <input class="form-control" type="text" name="calle" id="calle" placeholder="Calle, número ext e int" required autocomplete="address-line1">
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col">
+                <label for="cpp" class="form-label">Código Postal</label>
+                <input class="form-control"
+                    type="text" 
+                    name="cpp" 
+                    id="cpp" 
+                    required 
+                    pattern="\d{5}" 
+                    title="El código postal debe tener 5 dígitos"
+                >
+                <div id="cpp-error" class="text-danger small mt-1" style="display:none;"></div>
+            </div>
+            <div class="col-8">
+                <label for="referencia" class="form-label">Referencia</label>
+                <input class="form-control" type="text" name="referencia" id="referencia" placeholder="Referencia" autocomplete="address-level1">
+            </div>
+        </div>
+        
+        <div class="mb-3">
+            <label for="telefono" class="form-label">Número de Teléfono</label>
+            <input class="form-control" type="text" name="telefono" id="telefono" placeholder="Teléfono" required autocomplete="tel">
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col">
+                <label for="estado" class="form-label">Estado</label>
+                <input class="form-control" type="text" name="estado" id="estado" placeholder="Estado" required autocomplete="address-level1">
+            </div>
+            <div class="col">
+                <label for="ciudad" class="form-label">Ciudad</label>
+                <input class="form-control" type="text" name="ciudad" id="ciudad" placeholder="Ciudad" required autocomplete="address-level2">
+            </div>
+            <div class="col">
+                <label for="colonia" class="form-label">Colonia</label>
+                <input class="form-control" type="text" name="colonia" id="colonia" placeholder="Colonia" required autocomplete="address-line2">
+            </div>
+        </div>
+        
+        <button type="submit" name="envio" value="Guardar" class="btn btn-lg btn-bisel" style="background:none; border:none; padding:0;">
+            <img src="{% static 'shop/GUARDAR.png' %}" alt="Guardar" style="width:150px;">
+        </button>
+        <input type="hidden" value="save_adress" name="method">
+    </form>
+</div>
+
+<script>
+document.getElementById('address-form').addEventListener('submit', function(e) {
+  const emailInput = document.getElementById('email');
+  if (emailInput) {
+    const errorSpan = document.getElementById('email-error');
+    const email = emailInput.value;
+    const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!valid) {
+      e.preventDefault();
+      errorSpan.style.display = 'inline';
+    } else {
+      errorSpan.style.display = 'none';
+    }
+  }
+});
+</script>
+
+<br>
+{% endblock %}

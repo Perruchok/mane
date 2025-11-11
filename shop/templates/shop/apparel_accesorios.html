@@ -1,0 +1,62 @@
+{% extends "shop/layout.html" %}
+{% load static %}
+{% load shop_extras %}
+
+{% block main %}
+
+  <div class="d-flex flex-column align-items-center">
+    <!-- PRINTS  -->
+    {% if prints %}
+    <div class="containerapparel divgrid_apparell" style="display: flex; flex-direction: column; align-items: center;">
+      {% for item in prints %}
+      <div class="item" >
+        <a href="{% url 'product_detail' slug=item.slug %}" class="button_apparel">
+              <div class="imageblur"> 
+                <img class="item_picture" src="{{ item.pic0 }}">        
+                {% if item.stock|sum_list == 0 %}
+                <img class="marca" src="{% static 'shop/SOLD-OUT.png' %}">
+                {% endif %}
+              </div>
+              <p> </p>
+              <p class="item_name">
+                {{ item.nombre }} <br>
+                ${{ item.precio }}.00
+              </p>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% comment %} {% if season %}
+    <!-- SEASON  -->
+    <div class="justify-content-center custom_titulos_haunted">
+      <img src="{% static 'shop/HAUNTED.png' %}">
+    </div>
+    <!-- Second centered div (grid) -->
+    <div class="containerapparel divgrid_apparell">
+      {% for item in season %}
+      <div class="item">
+        <a href="{% url 'product_detail' slug=item.slug %}" class="button_apparel">
+              <div class="imageblur"> 
+                <img class="item_picture" src="{{ item.pic0 }}">        
+                {% if item.stock|sum_list == 0 %}
+                <img class="marca" src="{% static 'shop/SOLD-OUT.png' %}">
+                {% endif %}
+              </div>
+              <p> </p>
+              <p class="item_name">
+                {{ item.nombre }} <br>
+                ${{ item.precio }}.00
+              </p>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %} {% endcomment %}
+    
+  </div>
+
+  <br>
+
+{% endblock %}

@@ -1,0 +1,111 @@
+{% extends "shop/layout.html" %}
+{% load static %}
+
+{% block main %}
+
+  <div class="custom_titulos">
+    <img src="{% static 'shop/pedidos.png' %}" alt="pedidos" >
+  </div>
+  <br>
+
+   {% if messages %}
+      {% for message in messages %}
+
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <strong>{{ message }}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+          </button>
+        </div>
+        {% endfor %}
+     {% endif %}
+
+
+  {% if empty %}
+    <h4> Aún no tienes pedidos  </h4>
+    <a href="/"> Seguir comprando </a>
+    <br></br>
+  {% else %}
+
+
+    <div class = "container_cart" style="overflow-x:auto;">
+        {% for ped_ord,total,ped_sets,envio_descrip,envio_price,ttotal in ped_master %}
+            <h4>Pedido: {{ ped_ord|date:"d/m/Y H:i" }} </h4>
+
+              <table class="table align-middle table-bg">
+                <thead>
+                  <tr>
+                    <th scope="col">Artículo</th>
+                    <th scope="col">Cantidad</th>
+                    <th scope="col">Precio</th>
+                    <th scope="col">Estatus</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for pedido in ped_sets %}
+                  <tr>
+                      <td>
+                        <img src="{{ pedido.item.pic0 }}" class = "pedidos_img">
+                        <h5>{{ pedido.nombre }}</h5>
+                        Talla: {{ pedido.talla }}
+                      </td>
+                      <td>
+                        <br>
+                        <h5>{{ pedido.cantidad }}</h5>
+                      </td>
+                      <td>
+                        <br>
+                        <h5>${{ pedido.item.precio }}.00</h5>
+                      </td>
+                      <td>
+                        <br>
+                        <h5>{{ pedido.estatus }}</h5>
+                      </td>
+                  </tr>
+                  {% endfor %}
+                  <tr>
+                    <td colspan="1">
+                      <h5> Subtotal: </h5>
+                    </td>
+                    <td colspan="1">
+                  
+                    </td>
+                    <td colspan="1">
+                      <h5>${{ total }}.00</h5>
+                    </td>
+                    <td colspan="1">
+                  
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="1">
+                      <h5>Envío:</h5>                                  
+                    </td >
+                    <td colspan="1"> 
+                      <h6>{{ envio_descrip }}</h6>
+                    </td>
+                    <td colspan="1">
+                      <h5>${{ envio_price }}.00</h5>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="1">
+                      <h5>Total:</h5>
+                    </td>
+                    <td colspan="1">
+
+                    </td>
+                    <td>
+                      <h5>${{ ttotal }}.00</h5>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+          <br></br>
+        {% endfor %}
+    </div> 
+
+  {% endif %}  
+
+
+{% endblock %}

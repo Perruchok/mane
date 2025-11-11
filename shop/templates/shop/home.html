@@ -1,0 +1,72 @@
+{% extends "shop/layout.html" %}
+{% load static %}
+
+{% block main %}
+
+<div class="spacer"></div>
+
+<div class="container d-flex justify-content-center divgrid">
+  <div class="row w-100 justify-content-center gy-3">
+    {% comment %} First row (wide: 3 columns, narrow: 2 columns) {% endcomment %}
+    <div class="col-6 col-md-4 d-flex justify-content-center align-items-center mb-4 imageblur">
+      <a class="nav-link" data-category="TW" href="/apparel">
+        <img src="{% static 'shop/ICONOS-WEB.png' %}" alt="Icon 1" class="icon-grid">
+      </a>
+    </div>
+    <div class="col-6 col-md-4 d-flex justify-content-center align-items-center mb-4 imageblur">
+      <a href="/apparel_accesorios">
+        <img src="{% static 'shop/ACCESORIOS.png' %}" alt="Icon 2" class="icon-grid">
+      </a>
+    </div>
+    <div class="col-6 col-md-4 d-flex justify-content-center align-items-center mb-4 imageblur">
+      <a href="/coming_soon">
+        <img src="{% static 'shop/hoodie.png' %}" alt="Icon 3" class="icon-grid">
+      </a>
+    </div>
+    <div class="col-6 col-md-4 d-flex justify-content-center align-items-center mb-4 imageblur">
+      <a href="{% static 'shop/CATALOGO.pdf' %}" target="_blank">
+        <img src="{% static 'shop/catalog.png' %}" alt="Icon 4" class="icon-grid">
+      </a>
+    </div>
+    <div class="col-6 col-md-4 d-flex justify-content-center align-items-center mb-4 imageblur">
+      <a href="#bannerformmodal" data-bs-toggle="modal" data-bs-target="#ModalRedes">
+        <img src="{% static 'shop/SOCIALS.png' %}" alt="Icon 6" class="icon-grid">
+      </a>
+    </div>
+    <div class="col-6 col-md-4 d-flex justify-content-center align-items-center mb-4 imageblur">
+      <a href="/coming_soon">
+        <img src="{% static 'shop/ABOUT.png' %}" alt="Icon 5" class="icon-grid">
+      </a>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal para redes  -->
+<div class="modal fade" id="ModalRedes"   tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Dirección y contacto</h5>
+          </div>
+          <br>
+          <div class="form-group d-flex flex-column align-items-center gap-3">
+            <a href="https://www.instagram.com/team.maneapp.inc/" target="_blank" class="btn btn-lg btn-bisel" style="background:none; border:none; padding:0;">
+              <img src="{% static 'shop/instagram.png' %}" alt="insta" style="width:300px;">
+            </a>
+            <a href="https://www.facebook.com/people/maneapp-GoGo/61578250377650/" target="_blank" class="btn btn-lg btn-bisel" style="background:none; border:none; padding:0;">
+              <img src="{% static 'shop/facebook.png' %}" alt="face" style="width:300px;">
+            </a>
+            <a href='https://wa.me/524613409554?text=Saludos%20pal%20panteón!' name="whats" value="Estafeta/DHL" class="btn btn-lg btn-bisel" style="background:none; border:none; padding:0;">
+              <img src="{% static 'shop/whatsapp.png' %}" alt="whats" style="width:300px;">
+            </a>
+          </div>
+          <br>
+    </div>
+  </div>
+</div>
+
+<div class="footer_spacer"></div>
+
+
+{% endblock %}

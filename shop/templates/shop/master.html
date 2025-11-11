@@ -1,0 +1,168 @@
+{% extends "shop/layout.html" %}
+{% load static %}
+
+{% block main %}
+
+<div class="titulos ">
+      Bienvenido a la cuenta maestra
+</div>
+<br></br>
+{% if messages %}
+  {% for message in messages %} 
+
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <strong>{{ message }}</strong>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+      </button>
+    </div>
+    {% endfor %}
+  {% endif %}
+
+
+{% if empty %}
+  <h4> No hay pedidos activos  </h4>
+  <br></br>
+{% else %}
+<div class = "container_cart" style="overflow-x:auto;">
+  {% for hack,ped_ord,total,ped_sets in ped_master %}
+    <div style= "text-align: left;">
+      <h3>No.{{ hack.fecha }} &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp{{ hack.fecha }}</h3>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="align-middle">
+        <thead>
+          <tr>
+            <th scope="col">Artículo</th>
+            <th scope="col">Detalle</th>
+            <th scope="col">Precio</th>
+            <th scope="col">Estatus</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for pedido in ped_sets %}
+          <tr>
+              <td>
+                <img src="{{ pedido.item.pic0 }}" class = "pedidos_img">
+                <h5>{{ pedido.user.username }}</h5>
+                {{ pedido.item.nombre }}
+              </td>
+              <td>
+                <br>
+                <br>
+                Talla : {{ pedido.talla }}
+                <br>
+                Cantidad : {{ pedido.cantidad }}
+              </td>
+              <td>
+                <br>
+                <h5>${{ pedido.item.precio }}.00</h5>
+              </td>
+              <td>
+                <br>
+                <h5>{{ pedido.estatus }}</h5> 
+                <br>
+                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#b{{ hack.fecha }}">Cambiar estatus</button>
+                <!-- Modal pago -->
+                <div class="modal fade" id="b{{ hack.fecha }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">{{ hack.user.username }}</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                      
+                          <h5>Cambiar estatus </h5>
+                          <br></br>
+                          <div class = "estatus">
+                            <div>
+                            <form action="{% url 'master' %}" method="post" class="form-inline">
+                              {% csrf_token %}
+                              <input type="hidden" name="estatus" value="Enviado">
+                              <input type="hidden" name="fecha" value="{{ hack.fecha|date:'Y-m-d H:i:s' }}">
+                              <input type="hidden" name="user" value="{{ hack.user.id }}">
+                              <button type="submit" class="btn btn-danger">Enviado</button>
+                            </form>
+                            </div>
+                            <div>
+                            <form action="{% url 'master' %}" method="post" class="form-inline">
+                              {% csrf_token %}
+                              <input type="hidden" name="estatus" value="Recibido">
+                              <input type="hidden" name="fecha" value="{{ hack.fecha|date:'Y-m-d H:i:s' }}">
+                              <input type="hidden" name="user" value="{{ hack.user.id }}">
+                              <button type="submit" class="btn btn-warning">Recibido</button>
+                            </form>
+                            </div>
+                          </div>
+                   
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+          </tr>
+          {% endfor %}
+          <tr>
+            <td colspan="1">
+              <h5>Envío:</h5>
+            </td>
+            <td>
+              {{ hack.envio }}
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <h4>Total a pagar: ${{ total }}.00</h4>
+            </td>
+            <td colspan="2">
+
+              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#a{{ hack.user.telefono }}"> INFO USUARIO</button>
+              <!-- Modal For dirección y contacto -->
+              <div class="modal fade" id="a{{ hack.user.telefono }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">{{ hack.user.username }}</h5>
+                      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      {% if hack.user.telefono != None %}
+                        <h5>Contacto </h5>
+                        <p>Nombre completo: {{ hack.user.first_name }} {{ hack.user.last_name }}</p>
+                        <p>Telefono: {{ hack.user.telefono }}</p>
+                        <p>email: {{ hack.user.email  }}</p>
+                        <hr>
+                        <h5>Dirección de envío </h5>
+                        <p> Dirección: {{ hack.user.calle }}</p>
+                        <p> Código postal: {{ hack.user.cpp }}</p>
+                      {% else %}
+                        <p>Usuario no ha actualizado su información de usuario </p>
+                      {% endif %}
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+                   
+            </td>
+          </tr>
+  
+        </tbody>
+      </table> 
+    </div>  
+
+  <br></br>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% endblock %}
